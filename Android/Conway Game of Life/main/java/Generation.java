@@ -9,7 +9,7 @@ import android.view.SurfaceHolder;
 import java.util.Random;
 
 /**
- * Created by DPreacher on 2017-03-05.
+ * Created by DGWIngram on 2017-03-05.
  */
 
 public class Generation {
