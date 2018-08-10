@@ -9,7 +9,7 @@ import android.util.Log;
 import android.view.SurfaceView;
 
 /**
- * Created by dingram20 on 1/30/2017.
+ * Created by DGWIngram on 1/30/2017.
  */
 public class DrawView extends SurfaceView {
     float x0,y0,x1,y1;
