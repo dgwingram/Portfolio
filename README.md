@@ -53,8 +53,14 @@
 <details><summary>Projects</summary>
 <p>
   
-> ### TODO
-- Add Projects
+> ### Course 1: Assignment 1
+- This project was graded on our understanding of inheretance, interfaces, abstract classes. Version 1 is the closest to the handed in project
+
+> ### Course 1: Assignment 2
+- This project demonstrates our understand of the MVC Model as we built a paint app.
+
+> ### Course 2: Week 2 Labs
+- A Collection of in-class excercise working with ports and servers 
 
 </p>
 </details>
