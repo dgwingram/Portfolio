@@ -1,0 +1,28 @@
+//KC03M14  JOB 'DANIEL INGRAM',                                       
+//             MSGLEVEL=(1,1),                                        
+//             MSGCLASS=H,                                            
+//             TYPRUN=SCAN,                                           
+//             NOTIFY=&SYSUID                                         
+//*                                                                   
+//******************************************************************* 
+//*                                                                 * 
+//*                    DANIEL INGRAM EXERCISE 6                     * 
+//*                                                                 * 
+//*    DESCRIPTION:                                                 * 
+//*             JCL STATEMENT THAT INCOKES A CATOLOGUED PROCEDURE   * 
+//*                                                                 * 
+//******************************************************************* 
+//*                                                                   
+//         JCLLIB ORDER=SLC.CPA.SOURCE.PDS                      
+//STEP1    EXEC BUILD,                                          
+//             OCLASS='H',                                      
+//             MASTER='PAY.MASTER',                             
+//             TIME=(,55)                                       
+//UPDTE.NEWMASTR DD DISP=(NEW,PASS)                             
+//UPDTE.DATAIN DD *                                             
+INSTREAM DATA COMING FROM HERE                                  
+/*                                                              
+//PRINT.INFILE DD UNIT=,                                        
+//             VOL=SER=                                         
+//                                                                                                            
+ 
