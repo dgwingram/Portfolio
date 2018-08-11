@@ -1,0 +1,224 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. OFFICE-BENEFIT.
+      ******************************************
+      **   PROGRAMMER:  DANIEL INGRAM
+      **   PURPOSE:     
+      **   DATE:        MARCH 17, 2016
+      ******************************************
+       ENVIRONMENT DIVISION.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+            SELECT F01-EMPLOYEE-FILE ASSIGN TO 'empben.txt'
+                       ORGANIZATION IS LINE SEQUENTIAL.
+
+            SELECT F02-REPORT-FILE ASSIGN TO 'benReport.txt'
+                       ORGANIZATION IS LINE SEQUENTIAL.
+       DATA DIVISION.
+       FILE SECTION.
+       FD F01-EMPLOYEE-FILE
+            RECORDING MODE IS F
+            RECORD CONTAINS 80 CHARACTERS
+            DATA RECORD IS F01-EMPLOYEE-RECORD.
+       01 F01-EMPLOYEE-RECORD PIC X(80).
+       FD F02-REPORT-FILE
+            RECORDING MODE IS F
+            RECORD CONTAINS 80 CHARACTERS
+            DATA RECORD IS F02-REPORT-RECORD.
+       01 F02-REPORT-RECORD PIC X(80).
+       WORKING-STORAGE SECTION.
+       01 W01-EMPLOYEE-RECORD.
+            05   W01-EMP-ID PIC X(6).
+            05   W01-EMP-OFFICE-CODE PIC X(4).
+            05   W01-BENEFITS OCCURS 5 TIMES
+                   INDEXED BY W01-IDX.
+                   10 W01-BENEFIT-CODE PIC 9.
+                   10 W01-BENEFIT-COST PIC 9999V99.
+       01 W02-OFFICES.
+            05 W02-OFIICE OCCURS 11 TIMES 
+                INDEXED BY W02-OFFICE-IDX.
+                10 W02-OFFICE-CODE PIC X(4).
+       01 W03-IDX-TOTAL-BEN PIC 9 VALUE 0.
+       01 W04-EOF-SWITCH PIC X VALUE SPACES.
+       01 W05-DATA-TOTAL.
+           05 W05-OFFICE OCCURS 11 TIMES
+                INDEXED BY W05-OFFICE-IDX.
+              10 W05-OFFICE-NAME PIC X(12).
+              10 W05-OFFICE-BENEFITS OCCURS 5 TIMES
+                    INDEXED BY W05-IDX-BEN.
+                 15 W05-TOTAL-BENEFIT PIC ZZ,ZZ9.99
+              10 W05-LINE-TOTAL PIC ZZZ,ZZ9.99.
+       01 W06-BENEFITS.
+             05 W06-OFFICE-BENEFITS OCCURS 11 TIMES
+                   INDEXED BY W06-OFFICE-IDX.
+                10 W06-EACH-BENEFIT OCCURS 5 TIMES
+                       INDEXED BY W06-BEN-IDX.
+                    15 W06-BENEFIT-COSTS PIC 9999V99.
+       01 W07-HEADINGS.
+          05 W07-HEADING-ONE. 
+             10 PIC X(46) VALUE "WORLD-TECH SOFTWARE COMPANY           RUNDATE ".
+             10 W07-DATE PIC XXXX/XX/XX.
+          05 W07-HEADING-TWO.
+             10 PIC X(26) VALUE "BENEFIT COST SUMMARY REPORT".
+             10 PIC X(54) VALUE SPACES.
+          05 W07-HEADING-THREE.
+             10 PIC X(14) VALUE SPACES.
+             10 PIC X(7) VALUE "BENEFIT".
+             10 PIC X(41) VALUE ALL "-".
+             10 PIC X(6) VALUE "OFFICE".
+             10 PIC X(12) VALUE SPACES.
+          05 W07-HEADING-FOUR.
+             10 PIC X(14) VALUE "OFFICE NAME   ".
+             10 PIC X(4) VALUE "LIFE".
+             10 PIC X(5) VALUE SPACES.
+             10 PIC X(6) VALUE "DENTAL".
+             10 PIC X(3) VALUE SPACES.
+             10 PIC X(4) VALUE "HOSP".
+             10 PIC X(5) VALUE SPACES.
+             10 PIC X(4) VALUE "RRSP".
+             10 PIC X(5) VALUE SPACES.
+             10 PIC X(7) VALUE "PENSION".
+             10 PIC X(5) VALUE SPACES.
+             10 PIC X(5) VALUE "TOTAL".
+             10 PIC X(13) VALUE SPACES.
+       01 W08-FOOTERS 
+          05 W08-FOOTER-ONE
+             10 PIC X(14) VALUE "BENEFIT TOTAL ".
+             10 W08-TOTAL-ROW OCCURS 5 TIMES
+                INDEXED BY W08-SUM-IDX.
+                15 W08-BEN-SUBTOTAL pic 999,999.99.
+             10 PIC X(16) VALUE SPACES.
+          05 W08-FOOTER-TWO
+             10 PIC X(13) VALUE "COMPANY TOTAL".
+             10 PIC X(50) VALUE SPACES.
+             10 W08-GRAND-TOTAL PIC Z,ZZZ,ZZ9.99.
+             10 PIC X(5) VALUE SPACES.
+       01 W09-TOTALS.
+          05 W09-BEN-COL-TOTAL PIC 99999V99 VALUE 0.
+          05 W09-LINE-TOTALS PIC 999999V99 VALUE 0.
+          05 W09-GRAND-TOTAL PIC 9999999V99 VALUE 0.
+       PROCEDURE DIVISION.
+          MOVE FUNCTION CURRENT-DATE(1:8) TO W07-DATE
+          PERFORM A100-INITIALIZE-TABLES
+          PERFORM A200-READ-FILE
+          PERFORM A300-DISPLAY-DATA
+          .
+       A100-INITIALIZE-TABLES.
+      *INITIALIZE OFFICE NAMES 
+           MOVE "SAN FRANCISO" TO W05-OFFICE-NAME (1)
+           MOVE "MONTREAL" TO W05-OFFICE-NAME (2)
+           MOVE "TORONTO" TO W05-OFFICE-NAME (3)
+           MOVE "HONG KONG" TO W05-OFFICE-NAME (4)
+           MOVE "VANCOUVER" TO W05-OFFICE-NAME (5)
+           MOVE "LOS ANGELES" TO W05-OFFICE-NAME (6)
+           MOVE "MADRID" TO W05-OFFICE-NAME (7)
+           MOVE "CAPE TOWN" TO W05-OFFICE-NAME (8)
+           MOVE "NEW YORK" TO W05-OFFICE-NAME (9)
+           MOVE "BERLIN" TO W05-OFFICE-NAME (10)
+           MOVE "OTHER" TO W05-OFFICE-NAME (11)
+      *INITIALIZE OFFICE CODES      
+           MOVE "SANF" TO W02-OFFICE-CODE (1)
+           MOVE "MTL" TO W02-OFFICE-CODE (2)
+           MOVE "TOR" TO W02-OFFICE-CODE (3)
+           MOVE "HK" TO W02-OFFICE-CODE (4)
+           MOVE "VAN" TO W02-OFFICE-CODE (5)
+           MOVE "LA" TO W02-OFFICE-CODE (6)
+           MOVE "MADR" TO W02-OFFICE-CODE (7)
+           MOVE "CAPE" TO W02-OFFICE-CODE (8)
+           MOVE "NYC" TO W02-OFFICE-CODE (9)
+           MOVE "BERL" TO W02-OFFICE-CODE (10)
+           MOVE "****" TO W02-OFFICE-CODE (11)
+      *INITIALIZE BENEFIT COST TABLE     
+           INITIALIZE W06-BENEFITS. 
+           INITIALIZE W01-EMPLOYEE-RECORD.
+           .
+       A200-READ-FILE.
+            OPEN INPUT F01-EMPLOYEE-FILE
+            PERFORM UNTIL W04-EOF-SWITCH = 'Y'
+                READ F01-EMPLOYEE-FILE INTO W01-EMPLOYEE-RECORD
+                    AT END move 'Y' to  W04-EOF-SWITCH
+                    NOT AT END
+                        MOVE F01-EMPLOYEE-RECORD TO W01-EMPLOYEE-RECORD
+                        PERFORM B210-FIND-OFFICE
+                END-READ
+            END-PERFORM
+            CLOSE F01-EMPLOYEE-FILE
+            .
+       B210-FIND-OFFICE.
+            INITIALIZE W03-IDX-TOTAL-BEN
+            SEARCH W02-OFIICE 
+                AT END 
+                    PERFORM B220-ALLOCATE-COST
+                WHEN W02-OFFICE-CODE(W02-OFFICE-IDX) = W01-EMP-OFFICE-CODE
+                    set W06-OFFICE-IDX to W02-OFFICE-IDX
+                    PERFORM B220-ALLOCATE-COST
+            END-SEARCH
+            .
+       B220-ALLOCATE-COST.
+            PERFORM VARYING W01-IDX FROM 1 BY 1
+              UNTIL W01-IDX = 5
+              PERFORM VARYING W06-BEN-IDX FROM 1 BY 1
+                UNTIL W06-BEN-IDX = 5
+                IF W06-OFFICE-IDX = W01-BENEFIT-CODE(W01-IDX) 
+                    ADD W01-BENEFIT-COST(W01-IDX) 
+                        TO W06-BENEFIT-COSTS(W06-OFFICE-IDX, W06-BEN-IDX) 
+                    
+                END-IF
+              END-PERFORM
+            END-PERFORM
+           .
+       A300-DISPLAY-DATA.
+            OPEN OUTPUT F02-REPORT-FILE
+            PERFORM B310-DISPLAY-HEADINGS
+            PERFORM B320-TOTAL-OFFICE-BENEFITS.
+            PERFORM B330-CALC-SUM
+            PERFORM B340-DISPLAY-FOOTERS
+            CLOSE F02-REPORT-FILE
+           .
+       B310-DISPLAY-HEADINGS.
+            MOVE W07-HEADING-ONE TO F02-REPORT-RECORD
+            WRITE F02-REPORT-RECORD
+            MOVE W07-HEADING-TWO TO F02-REPORT-RECORD
+            WRITE F02-REPORT-RECORD
+            MOVE W07-HEADING-THREE TO F02-REPORT-RECORD
+            WRITE F02-REPORT-RECORD
+            MOVE W07-HEADING-FOUR TO F02-REPORT-RECORD
+            WRITE F02-REPORT-RECORD
+           .
+       B320-TOTAL-OFFICE-BENEFITS.
+            INITIALIZE W09-GRAND-TOTAL
+            PERFORM VARYING W06-OFFICE-IDX FROM 1 BY 1
+                UNTIL W06-OFFICE-IDX = 11
+                INITIALIZE W09-LINE-TOTALS
+                PERFORM VARYING W06-BEN-IDX FROM 1 BY 1
+                  UNTIL W06-BEN-IDX = 5
+                  ADD W06-BENEFIT-COSTS(W06-OFFICE-IDX, W06-BEN-IDX)
+                    TO W09-LINE-TOTALS
+                   set W05-OFFICE-IDX to W06-OFFICE-IDX
+                   SET W05-IDX-BEN TO W06-BEN-IDX
+                  MOVE W06-BENEFIT-COSTS(W06-OFFICE-IDX, W06-BEN-IDX) 
+                    TO W05-TOTAL-BENEFIT(W05-OFFICE-IDX, W05-IDX-BEN) 
+                  ADD W09-LINE-TOTALS TO W09-GRAND-TOTAL
+               
+                END-PERFORM
+            END-PERFORM
+            MOVE W09-GRAND-TOTAL TO W08-GRAND-TOTAL
+           .
+       B330-CALC-SUM.
+            PERFORM VARYING W06-BEN-IDX FROM 1 BY 1 
+               UNTIL W06-BEN-IDX = 5
+               INITIALIZE W09-BEN-COL-TOTAL
+               PERFORM VARYING W06-OFFICE-IDX FROM 1 BY 1
+                 UNTIL W06-OFFICE-IDX = 11
+                  ADD W06-BENEFIT-COSTS(W06-OFFICE-IDX, W06-BEN-IDX) 
+                     TO W09-BEN-COL-TOTAL 
+               END-PERFORM
+               SET W08-SUM-IDX TO W06-BEN-IDX
+               MOVE W09-BEN-COL-TOTAL TO W08-BEN-SUBTOTAL(W08-SUM-IDX)
+            END-PERFORM
+           .
+       B340-DISPLAY-FOOTERS.
+            MOVE W08-FOOTER-ONE TO F02-REPORT-RECORD
+            WRITE F02-REPORT-RECORD
+            MOVE W08-FOOTER-TWO TO F02-REPORT-RECORD
+            WRITE F02-REPORT-RECORD
+           .       
