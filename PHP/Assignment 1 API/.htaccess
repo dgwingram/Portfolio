@@ -1,0 +1,4 @@
+RewriteEngine On
+
+RewriteRule ^messages$  messages.php [L]
+RewriteRule ^messages/$ messages.php [L]
