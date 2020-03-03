@@ -29,7 +29,7 @@ int main(){
 	cout << endl;
 	system("pause");
 }
-iostream & operator<<(ostream & out, DateList dateListObj){
+ostream& operator<<(ostream& out, DateList dateListObj){
 	if (dateListObj.firstPtr == NULL)
 		out << "no Dates"<<endl;
 	else
