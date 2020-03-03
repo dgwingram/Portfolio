@@ -46,11 +46,13 @@ void DateList::addDate(){
 	if (walker == NULL || walker->name != newName){
 		char gender;
 		int age;
+		
 		Date *builder = new Date;
 		assert(builder != NULL);
 
 		cout << "Enter Age: ";
 		cin >> age;
+		
 		while (age < 18){
 			cout << "Must be 18 or older. Please re-enter age: ";
 			cin >> age;
@@ -67,15 +69,18 @@ void DateList::addDate(){
 		builder->gender = gender;
 		builder->name = newName;
 		builder->link = walker;
+		
 		if (firstPtr != NULL)
 			stalker->link = builder;
 		else
 			firstPtr = builder;
+		
 		numberOfDates++;
 	}
-	else
+	else{
 		cout << endl << newName << " already exists."<<endl
 			 << "Press enter to continue: " << endl;
+	}
 	cin.ignore(80, '\n');
 }
 
@@ -92,17 +97,20 @@ void DateList::removeDate(string name){
 		if (walker == NULL){
 			message = " not found.";
 		}
-		else if (stalker == NULL)
-		{
-			walker = walker->link;
-			delete firstPtr;
-			firstPtr = walker;
+		else {
+			if (stalker == NULL){
+				walker = walker->link;
+				delete firstPtr;
+				firstPtr = walker;
+			}
+			else{
+				stalker->link = walker->link;
+				delete walker;
+			}
 		}
-		else{
-			stalker->link = walker->link;
-			delete walker;
-		}
+		
 		cout << endl << name << message;
+		numberOfDates--;
 	}
 	else{
 		cout << endl << "There are no Dates.";
