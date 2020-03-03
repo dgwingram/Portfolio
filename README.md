@@ -33,9 +33,17 @@
 <details><summary>Projects</summary>
 <p>
   
-> ### TODO
-- Add Projects
+> ### Assignment 1
+- Program asking client input allowing customer to exit loop.  It then calculates the requested volume.
+  
+> ### Assignment 2
+- Program used to learn Date formats while coding both sides of a specification file.
+  
+> ### Assignment 3
+- Program simulating coding program with only a header file while also using pointers.
 
+> ### Labs
+- Various in-class assignments that lead up to assignment 1, 2 or 3.
 </p>
 </details>
 
