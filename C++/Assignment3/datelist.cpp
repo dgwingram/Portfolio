@@ -12,7 +12,7 @@ DateList::DateList(string newName){
 	firstPtr = NULL;
 }
 
-void DateList::showDate(ostream  & out)const{
+void DateList::showDate(ostream& out)const{
 	out <<endl<<endl<< datingServiceName << endl;
 	out << left << setw(25) << "Name" << setw(8) << "Gender" << setw(8) << "Age" << endl << endl;
 
