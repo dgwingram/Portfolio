@@ -1,7 +1,7 @@
 <?php
     $host="localhost";
     $user = "root";
-    $pwd = "mysql";
+    $pwd = "";
     $database = "comp74a1ingram";
     
     $con = mysqli_connect($host, $user, $pwd, $database);
